@@ -1,26 +1,27 @@
-const breed = process.argv[2];
-
 const request = require('request'); // request allows us to get the html code of a specified url
 
 
-request(`https://api.thecatapi.com/v1/breeds/search?q=${breed}`, (error, response, body) => {
+const fetchBreedDescription = function(breedName, callback) {
 
-  if (error || response.statusCode !== 200) {
-    console.log('error:', error);
+  request(`https://api.thecatapi.com/v1/breeds/search?q=${breedName}`, (error, response, body) => {
 
-  } else {
-    const data = JSON.parse(body);
-    
-    if (data[0]) {
-      console.log(data[0]['description']);
+    if (error || response.statusCode !== 200) {
+      callback(error, null);
+  
     } else {
-      console.log('Breed name not found');
+      const data = JSON.parse(body);
+     
+      if (data[0]) {
+        callback(null, data[0]['description']);
+      } else {
+        callback(null, 'Breed not found');
+      }
     }
-  }
+  });
+  
+};
 
 
-});
-
-
+module.exports = { fetchBreedDescription };
 
 
